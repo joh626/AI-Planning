@@ -113,6 +113,29 @@ Also plan for 32 GB system RAM and 200–500 GB free SSD space for models.
 
 ---
 
+### Our machine: HP OMEN 16L (RTX 5060 Ti 8 GB, i5-14400F, 16 GB DDR5, 1 TB SSD)
+
+The 8 GB of GPU memory (VRAM) is the deciding limit. Plan around **SDXL**.
+
+| Task | Verdict on this PC |
+|---|---|
+| SDXL + line-art LoRAs + ControlNet at 1024×1024 | ✅ **Primary path.** About 5–15 s per image; batches of 4 are fine. |
+| SD 1.5 line-art models | ✅ Very fast. Useful for quick drafts. |
+| Z-Image Turbo (quantised GGUF/fp8) | ⚠️ Possible in ComfyUI. Worth testing as an upgrade. |
+| FLUX.1 dev / Krea dev / Kontext (GGUF Q4–Q5) | ⚠️ Runs in ComfyUI, but slowly (around 1 min or more per image). With 16 GB of system RAM it will swap heavily. |
+| Qwen-Image, FLUX.2 | ❌ Too large for this PC. Rent a cloud GPU instead. |
+| Train an SDXL style LoRA | ⚠️ Possible in OneTrainer/kohya with low-VRAM settings (batch 1, gradient checkpointing, Adafactor/8-bit, fp8 base). Takes about 1–3 h. **Alternative:** rent a 24 GB cloud GPU for about an hour (a few dollars per LoRA). |
+| Train a FLUX LoRA | ❌ Use a cloud GPU. |
+
+**Recommended set-up for this PC**
+1. **Upgrade system RAM to 32 GB** (2×16 GB DDR5). It's the cheapest upgrade with the biggest effect: it stops model swapping and makes FLUX/Z-Image tests bearable. Check which RAM the HP motherboard supports first.
+2. **Front-end:** use **ComfyUI** (desktop or portable) as the engine. It handles 8 GB best. Add **Krita + AI Diffusion** on top for a Krea-like "sketch and generate" canvas. **InvokeAI** also runs SDXL on 8 GB, so use it if you prefer Leonardo's feel. **Forge** is the simplest fallback.
+3. **RTX 50-series note:** Blackwell cards need **recent builds** (PyTorch with CUDA 12.8+). Use the current installers. Older guides and old one-click packages often fail on 50-series cards with "no kernel image" errors.
+4. **Resolution isn't a problem.** Generate at SDXL's native ~1024 px, then upscale 2–3× or vectorise with potrace. Line art vectorises cleanly to any print size, so 8 GB doesn't limit print quality.
+5. **Storage:** 1 TB is enough. SDXL checkpoints are about 7 GB each and LoRAs about 50–200 MB. Keep it to 2–3 base models.
+
+---
+
 ## 6. Cost comparison (rough)
 
 - **Leonardo / Krea:** subscription plus credits. Iterating on 4–8 books × 30–50 pages × many retries adds up, and LoRA training costs extra.
@@ -131,7 +154,7 @@ Also plan for 32 GB system RAM and 200–500 GB free SSD space for models.
 
 ## Suggested next steps
 
-1. Confirm the hardware (GPU model and VRAM, or Mac specs).
+1. ~~Confirm the hardware.~~ Done: RTX 5060 Ti 8 GB with 16 GB RAM (see section 5). Go SDXL-first and consider upgrading to 32 GB RAM.
 2. Install **InvokeAI** and **ComfyUI** with a shared models folder, and download an SDXL base model, 1–2 line-art LoRAs, and ControlNet lineart.
 3. Generate about 50 test pages, then pick 20–40 "golden" pages to form the style bible.
 4. Train the house-style LoRA, then compare it against the off-the-shelf LoRAs.
